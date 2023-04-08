@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 3.10)
 project (ComputerGraphic_OpenglCPP)
 
 # Where is the binary should be placed
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # 设置 std 和 c++版本为
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
