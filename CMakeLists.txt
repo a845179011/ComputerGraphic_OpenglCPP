@@ -15,3 +15,4 @@ set(MY_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/libraries)
 # 设置子项目
 #add_subdirectory("libraries")
 add_subdirectory("ch02")
+add_subdirectory("ch03")
