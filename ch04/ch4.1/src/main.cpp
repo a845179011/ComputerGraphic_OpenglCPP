@@ -101,6 +101,47 @@ void display(GLFWwindow* window, double currentTime)
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+// 连续2次调用glDrawArrays，即使后一次实体在后面，也能正确显示遮盖的效果
+void display_twoCube(GLFWwindow* window, double currentTime)
+{
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(renderingProgram);
+
+	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
+	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix");
+
+	glfwGetFramebufferSize(window, &width, &height);
+	aspect = (float)width / (float)height;
+	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
+
+	//靠近视点的方块
+	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+	mMat = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f));
+	mvMat = vMat * mMat;
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	//远离视点的方块
+	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+	mMat = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 2.0f, -2.0f));
+	mvMat = vMat * mMat;
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+}
 int main()
 {
 	if (!glfwInit())
@@ -120,7 +161,8 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		display(window, glfwGetTime());
+		//display(window, glfwGetTime());
+		display_twoCube(window, glfwGetTime());
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
