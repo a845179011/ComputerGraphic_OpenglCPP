@@ -138,6 +138,13 @@ GLuint Utils::loadTexture(const char* texImagePath)
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		//使用各向异性过滤
+		if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
+			GLfloat anisoSetting = 0.0f;
+			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisoSetting);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisoSetting);
+		}
 	}
 	return textureID;
 }
