@@ -117,7 +117,7 @@ void display(GLFWwindow* window, double currentTime)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDrawArrays(GL_TRIANGLES, 0, 18);
-	//glDrawArrays(GL_LINES, 0, 27);	//不同类型的图元可以在一个绘制程序中
+	//glDrawArrays(GL_LINES, 0, 27);	//不同类型的图元可以在一个绘制程序中 
 }
 
 int main()
