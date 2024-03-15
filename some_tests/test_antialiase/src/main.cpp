@@ -83,11 +83,11 @@ std::string getCurrentExecuteDir()
 GLuint createShaderProgram()
 {
 	std::string vShaderPathStr = getCurrentExecuteDir();
-	vShaderPathStr.append("\\shaders\\vertShader.glsl");
+	vShaderPathStr.append("\\shaders\\vertShader.vs");
 	std::string gShaderPathStr = getCurrentExecuteDir();
-	gShaderPathStr.append("\\shaders\\geometryShader.glsl");
+	gShaderPathStr.append("\\shaders\\geometryShader.gs");
 	std::string fShaderPathStr = getCurrentExecuteDir();
-	fShaderPathStr.append("\\shaders\\fragShader.glsl");
+	fShaderPathStr.append("\\shaders\\fragShader.fs");
 	std::string vShaderStr = readShaderSource(vShaderPathStr.c_str());
 	std::string gShaderStr = readShaderSource(gShaderPathStr.c_str());
 	std::string fShaderStr = readShaderSource(fShaderPathStr.c_str());
