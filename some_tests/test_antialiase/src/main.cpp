@@ -180,6 +180,7 @@ void display(GLFWwindow* window, double currentTime)
 	GLuint projLoc = glGetUniformLocation(renderingProgram, "proj_matrix");
 	GLuint colorLoc = glGetUniformLocation(renderingProgram, "u_color");
 	GLuint widthLoc = glGetUniformLocation(renderingProgram, "u_width");
+	GLuint heightLoc = glGetUniformLocation(renderingProgram, "u_height");
 	GLuint lineWidthLoc = glGetUniformLocation(renderingProgram, "u_lineWidth");
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -191,6 +192,7 @@ void display(GLFWwindow* window, double currentTime)
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 	glUniform4f(colorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 	glUniform1i(widthLoc, width);
+	glUniform1i(heightLoc, height);
 	glUniform1f(lineWidthLoc, 50.0f);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);

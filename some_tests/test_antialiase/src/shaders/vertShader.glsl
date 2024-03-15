@@ -5,6 +5,7 @@ uniform mat4 mv_matrix;
 uniform mat4 proj_matrix;
 uniform vec4 u_color;
 uniform int u_width;
+uniform int u_height;
 uniform float u_lineWidth;
 
 //out vec4 the_color;
