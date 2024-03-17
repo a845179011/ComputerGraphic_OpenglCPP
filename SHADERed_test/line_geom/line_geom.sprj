@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<project version="2">
+	<pipeline>
+		<pass name="line_geom" type="shader" active="true" patchverts="1">
+			<shader type="vs" path="shaders\line_geom_line_geomVS.glsl" entry="main" />
+			<shader type="ps" path="shaders\line_geom_line_geomPS.glsl" entry="" />
+			<shader used="true" type="gs" path="shaders\line_geom_line_geomGS.glsl" entry="main" />
+			<inputlayout>
+				<item value="BufferFloat3" semantic="POSITION" />
+			</inputlayout>
+			<rendertexture />
+			<items>
+				<item name="vertexes" type="vertexbuffer">
+					<buffer>vBuffer</buffer>
+					<topology>LineList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4" name="u_color">
+					<row>
+						<value>1</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+				</variable>
+				<variable type="float" name="u_lineWidth">
+					<row>
+						<value>50</value>
+					</row>
+				</variable>
+				<variable type="float2" name="u_viewportSize" system="ViewportSize" />
+				<variable type="float4x4" name="u_pMat" system="Orthographic" />
+				<variable type="float4x4" name="u_vMat" system="View" />
+				<variable type="float4x4" name="u_mMat" system="GeometryTransform" />
+			</variables>
+			<macros />
+		</pass>
+	</pipeline>
+	<objects>
+		<object type="buffer" name="vBuffer" size="24" format="float3" pausedpreview="false">
+			<bind slot="0" name="line_geom" />
+		</object>
+	</objects>
+	<cameras />
+	<settings>
+		<entry type="file" name="line_geom" shader="vs" />
+		<entry type="file" name="line_geom" shader="ps" />
+		<entry type="file" name="line_geom" shader="gs" />
+		<entry type="pinned" name="u_lineWidth" owner="line_geom" />
+		<entry type="camera" fp="true">
+			<positionX>0</positionX>
+			<positionY>0</positionY>
+			<positionZ>7.01428556</positionZ>
+			<yaw>0</yaw>
+			<pitch>0</pitch>
+		</entry>
+		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
+		<entry type="usealpha" val="false" />
+		<entry type="bkpt" file="C:/Users/ASUS/Downloads/SHADERed_test/line_geom/shaders/line_geom_line_geomVS.glsl" line="14" use_cond="false" cond="" enabled="true" />
+		<entry type="bkpt" file="C:/Users/ASUS/Downloads/SHADERed_test/line_geom/shaders/line_geom_line_geomVS.glsl" line="13" use_cond="false" cond="" enabled="true" />
+		<entry type="bkpt" file="C:/Users/ASUS/Downloads/SHADERed_test/line_geom/shaders/line_geom_line_geomGS.glsl" line="49" use_cond="false" cond="" enabled="true" />
+		<entry type="bkpt" file="C:/Users/ASUS/Downloads/SHADERed_test/line_geom/shaders/line_geom_line_geomGS.glsl" line="48" use_cond="false" cond="" enabled="true" />
+	</settings>
+	<plugindata />
+</project>
