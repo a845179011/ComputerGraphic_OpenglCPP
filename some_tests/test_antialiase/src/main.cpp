@@ -136,7 +136,7 @@ GLuint createShaderProgram()
 
 	GLuint vfProgram = glCreateProgram();
 	glAttachShader(vfProgram, vShader);
-	glAttachShader(vfProgram, gShader);
+	//glAttachShader(vfProgram, gShader);
 	glAttachShader(vfProgram, fShader);
 	glLinkProgram(vfProgram);
 	checkOpenGLError();
@@ -153,7 +153,10 @@ glm::mat4 pMat;
 void resizeCallback (GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
-	pMat = glm::ortho(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, -1.0f, 1.0f);
+	//pMat = glm::ortho(-width / 2.0f, width / 2.0f, height / 2.0f, -height / 2.0f, -1.0f, 1.0f);
+	//pMat = glm::ortho(0, width, height, 0, -1, 1);
+	//pMat = glm::ortho(0.0f, width*1.0f, 0.0f, height*1.0f, -1.0f, 1.0f);
+	pMat = glm::ortho(0.0f, width * 1.0f, height * 1.0f, 0.0f, -1.0f, 1.0f);
 }
 void init(GLFWwindow* window)
 {
@@ -161,7 +164,7 @@ void init(GLFWwindow* window)
 	
 	renderingProgram = createShaderProgram();
 
-	float lineVertexes[] = { 0.0f, -100.0f, 0.0f, 0, 100.0f, 0.0f };
+	float lineVertexes[] = { 0.0f, 0.0f, 0.0f, 200.0f, 50.0f, 0.0f };
 
 	glGenVertexArrays(numVAOs, vao);
 	glBindVertexArray(vao[0]);
@@ -186,7 +189,10 @@ void display(GLFWwindow* window, double currentTime)
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 	//glm::mat4 pMat = glm::ortho(-200.0f, 200.0f, -200.0f, 200.0f, -1.0f, 1.0f);
-	pMat = glm::ortho(-width/2.0f, width / 2.0f, -height/2.0f, height / 2.0f, -1.0f, 1.0f);
+	//pMat = glm::ortho(-width/2.0f, width / 2.0f, height/2.0f, -height / 2.0f, -1.0f, 1.0f);
+	//pMat = glm::ortho(0, width, height, 0, -1, 1);
+	//pMat = glm::ortho(0.0f, width * 1.0f, 0.0f, height * 1.0f, -1.0f, 1.0f);
+	pMat = glm::ortho(0.0f, width * 1.0f, height * 1.0f, 0.0f, -1.0f, 1.0f);
 	glm::mat4 mvMat = glm::mat4(1.0f);
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));

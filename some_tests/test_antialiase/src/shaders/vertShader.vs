@@ -11,6 +11,6 @@ uniform float u_lineWidth;
 //out vec4 the_color;
 void main(void) 
 {
-	gl_Position = mv_matrix* vec4(position, 1.0f);
+	gl_Position = proj_matrix * mv_matrix* vec4(position, 1.0f);
 	//the_color = vec4(0.0f, 0.0f, 1.0f, 1.0f);
 }
