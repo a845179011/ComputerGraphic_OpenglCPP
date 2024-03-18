@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project version="2">
+	<pipeline>
+		<pass name="triangle_geom" type="shader" active="true" patchverts="1">
+			<shader type="vs" path="shaders\triangle_geom_triangle_geomVS.glsl" entry="main" />
+			<shader type="ps" path="shaders\triangle_geom_triangle_geomPS.glsl" entry="main" />
+			<shader used="true" type="gs" path="shaders\triangle_geom_triangle_geomGS.glsl" entry="main" />
+			<inputlayout>
+				<item value="BufferFloat3" semantic="面面面面面面面面面面面面面面面面面面面面面面&#08;" />
+			</inputlayout>
+			<rendertexture />
+			<items>
+				<item name="vertexes" type="vertexbuffer">
+					<buffer>vBuffer</buffer>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="u_pMat" system="Orthographic" />
+				<variable type="float4x4" name="u_vMat" system="View" />
+				<variable type="float4x4" name="u_mMat" system="GeometryTransform" />
+			</variables>
+			<macros />
+		</pass>
+	</pipeline>
+	<objects>
+		<object type="buffer" name="vBuffer" size="36" format="float3" pausedpreview="false" />
+	</objects>
+	<cameras />
+	<settings>
+		<entry type="file" name="triangle_geom" shader="vs" />
+		<entry type="file" name="triangle_geom" shader="ps" />
+		<entry type="file" name="triangle_geom" shader="gs" />
+		<entry type="camera" fp="true">
+			<positionX>0</positionX>
+			<positionY>0</positionY>
+			<positionZ>7</positionZ>
+			<yaw>0</yaw>
+			<pitch>0</pitch>
+		</entry>
+		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
+		<entry type="usealpha" val="false" />
+	</settings>
+	<plugindata />
+</project>

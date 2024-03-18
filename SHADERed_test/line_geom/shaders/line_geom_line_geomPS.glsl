@@ -7,12 +7,13 @@ uniform float u_lineWidth;
 
 //in vec4 the_color;
 in vec3 the_color;
-flat in vec3 pt1;
-flat in vec3 pt2;
-flat in vec3 pt3;
-flat in vec3 pt4;
 
+in vec3 pt1;
+in vec3 pt2;
+in vec3 pt3;
+in vec3 pt4;
 
+// check whether v is between min and max. is between  get green, less than min get red, more than max get blue
 void check_value(float v, float min, float max)
 {
 	if(v>=min && v<=max)
@@ -31,11 +32,15 @@ void check_value(float v, float min, float max)
 
 void main(void)
 {
+	
 	vec2 c1=vec2( (pt1+pt2)/2.0);
 	vec2 c2=vec2( (pt3+pt4)/2.0);
 	vec2 cVec=c2-c1;
 	vec2 cDir=normalize( cVec);
-	//check_value(pt1.y, -0.4, -0.3 );
+	check_value(pt1.y, 0.375, 0.38 );
+
+
+	// https://zhuanlan.zhihu.com/p/102068376
 	vec4 ndc = vec4( gl_FragCoord.xy/u_viewportSize * 2.0 - 1.0, gl_FragCoord.z * 2.0 - 1.0, 1.0 );
 	vec2 aVec=ndc.xy - c1;
 	
@@ -46,6 +51,8 @@ void main(void)
 	float dist = distance(projPt, ndc.xy);
 	float feather = u_lineWidth * (2.0f / u_viewportSize.x);	
 	float factor=dist/(feather*2.0f);
+	
+
 	//color = u_color + vec4(0.0f, 0.0f, 1.0f, 1.0f - factor);
 	//color = u_color + vec4(0.0f, 0.0f, 1.0f, 1.0f - pt1.x);
 	//color = (gl_FragCoord.x) * u_color;
@@ -54,7 +61,7 @@ void main(void)
 	//color = vec4(0.0, 0.0f, 1.0f, 1.0f);
 	//color = vec4(pt1.x*100.0f, 0.0f, 0.0f, 1.0f);
 	
-	color = u_color;
+	//color = u_color;
 	//color = the_color;
 	
 	//gl_Color = u_color;
