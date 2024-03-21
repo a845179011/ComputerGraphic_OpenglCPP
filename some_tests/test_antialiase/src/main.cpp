@@ -88,12 +88,16 @@ GLuint createShaderProgram()
 	gShaderPathStr.append("\\shaders\\geometryShader.gs");
 	std::string fShaderPathStr = getCurrentExecuteDir();
 	fShaderPathStr.append("\\shaders\\fragShader.fs");
+	std::string fShaderCommonPathStr = getCurrentExecuteDir();
+	fShaderCommonPathStr.append("\\shaders\\flagmentShaderCommon.fs");
 	std::string vShaderStr = readShaderSource(vShaderPathStr.c_str());
 	std::string gShaderStr = readShaderSource(gShaderPathStr.c_str());
 	std::string fShaderStr = readShaderSource(fShaderPathStr.c_str());
+	std::string fShaderCommonStr = readShaderSource(fShaderCommonPathStr.c_str());
 	const char* vshaderSource = vShaderStr.c_str();
 	const char* gshaderSource = gShaderStr.c_str();
 	const char* fshaderSource = fShaderStr.c_str();
+	const char* fshaderCommonSource = fShaderCommonStr.c_str();
 
 	GLint vertCompiled;
 	GLint geometryCompiled;
@@ -103,9 +107,11 @@ GLuint createShaderProgram()
 	GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
 	GLuint gShader = glCreateShader(GL_GEOMETRY_SHADER);
 	GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint fShaderCommon = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(vShader, 1, &vshaderSource, NULL);
 	glShaderSource(gShader, 1, &gshaderSource, NULL);
 	glShaderSource(fShader, 1, &fshaderSource, NULL);
+	glShaderSource(fShaderCommon, 1, &fshaderCommonSource, NULL);
 
 	glCompileShader(vShader);
 	checkOpenGLError();	//检查不出错误？
@@ -125,6 +131,15 @@ GLuint createShaderProgram()
 		printShaderLog(gShader);
 	}
 
+	glCompileShader(fShaderCommon);
+	checkOpenGLError();
+	glGetShaderiv(fShaderCommon, GL_COMPILE_STATUS, &fragCompiled);
+	if (fragCompiled != 1)
+	{
+		std::cout << "fragment common compilation failed" << std::endl;
+		printShaderLog(fShaderCommon);
+	}
+
 	glCompileShader(fShader);
 	checkOpenGLError();
 	glGetShaderiv(fShader, GL_COMPILE_STATUS, &fragCompiled);
@@ -137,6 +152,7 @@ GLuint createShaderProgram()
 	GLuint vfProgram = glCreateProgram();
 	glAttachShader(vfProgram, vShader);
 	//glAttachShader(vfProgram, gShader);
+	glAttachShader(vfProgram, fShaderCommon);
 	glAttachShader(vfProgram, fShader);
 	glLinkProgram(vfProgram);
 	checkOpenGLError();

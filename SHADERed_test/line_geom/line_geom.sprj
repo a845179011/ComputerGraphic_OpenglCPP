@@ -45,9 +45,7 @@
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="file" name="line_geom" shader="vs" />
-		<entry type="file" name="line_geom" shader="ps" />
-		<entry type="file" name="line_geom" shader="gs" />
+		<entry type="property" name="line_geom" item="pipe" />
 		<entry type="pinned" name="u_lineWidth" owner="line_geom" />
 		<entry type="camera" fp="true">
 			<positionX>0</positionX>

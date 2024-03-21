@@ -13,6 +13,8 @@ flat in vec3 pt2;
 flat in vec3 pt3;
 flat in vec3 pt4;
 
+vec4 getColor();
+
 // @验证范围。范围内为绿色，小于范围为红色，大于范围为蓝色
 void check_value(float v, float min, float max)
 {
@@ -60,6 +62,7 @@ void main(void)
 	//color = u_color;
 	//color = the_color;
 	
+	color = getColor();
 	//gl_Color = u_color;
 	
 	//color = vec4(the_color, 1.0f);

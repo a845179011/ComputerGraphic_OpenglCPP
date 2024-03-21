@@ -4,14 +4,16 @@ out vec4 color;
 uniform vec4 u_color;
 uniform vec2 u_viewportSize;
 uniform float u_lineWidth;
+uniform bool u_isSelected;
+uniform bool u_isHighlighted;
 
-//in vec4 the_color;
-in vec3 the_color;
+in vec3 begin; 	// line begin point in standard CS
+in vec3 end;
+in float width;	// line width in standard CS
 
-in vec3 pt1;
-in vec3 pt2;
-in vec3 pt3;
-in vec3 pt4;
+// antialiasing width, usually 3 pixels
+#define ANTIALIASING_WIDTH 5.0f
+#define HIGHLIGHT_WIDTH 10.0f
 
 // check whether v is between min and max. is between  get green, less than min get red, more than max get blue
 void check_value(float v, float min, float max)
@@ -30,13 +32,26 @@ void check_value(float v, float min, float max)
 	}
 }
 
-void main(void)
+bool is_point_in_circle(vec2 pt, vec2 center, float radius)
 {
-	
-	vec2 c1=vec2( (pt1+pt2)/2.0);
-	vec2 c2=vec2( (pt3+pt4)/2.0);
-	vec2 cVec=c2-c1;
-	vec2 cDir=normalize( cVec);
+	if(distance(pt, center)<=radius)
+	{
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
+}
+void set_color_normal()
+{
+	vec2 c1=vec2(begin);
+	vec2 c2=vec2(end);
+	vec2 cDir=normalize( c2-c1);
+	vec2 begin_origin = c1 + cDir*width/2.0f;
+	vec2 end_origin = c2 - cDir*width/2.0f;
+	vec2 cVec=end_origin - begin_origin;
+	float len = length(cVec);
 	//check_value(pt1.x, 0.161, 0.162);
 	//check_value(pt1.y, 0.454, 0.455);
 	//check_value(pt2.x, 0.283, 0.284);
@@ -49,20 +64,75 @@ void main(void)
 
 	// https://zhuanlan.zhihu.com/p/102068376
 	vec4 ndc = vec4( gl_FragCoord.xy/u_viewportSize * 2.0 - 1.0, gl_FragCoord.z * 2.0 - 1.0, 1.0 );
-	vec2 aVec=ndc.xy - c1;
+	vec2 aVec=ndc.xy - begin_origin;
+	float ANTIALIASING_WIDTH_in_stanard_CS = ANTIALIASING_WIDTH * (2.0f / u_viewportSize.x);
 	
 	//check_value(ndc.x, 0.161, 0.283);
 	//check_value(ndc.y, -0.364, 0.454);
 
 	//vec2 aVec=gl_FragCoord.xy-c1;	
 	float projLength=dot(cVec, aVec) / length(cVec);
-	vec2 projPt=c1+cDir*projLength;
-	float dist = distance(projPt, ndc.xy);
+	float raidus_in = (width - ANTIALIASING_WIDTH_in_stanard_CS) / 2.0f;
+	float radius = width/2.0f;
 
-	float feather = distance(pt1, pt2);
-	float factor = dist * 2.0 / feather;
-	//color = vec4(0.0f, 0.0f, 1.0f, 1.0f - factor);
-	color = vec4(0.0f, 1.0f - factor, 0.0f, 1.0f);
+	//check_value(raidus_in, 0.0611, 0.0612);
+	//check_value(projLength, 0.0, length(cVec));
+	//return;
+	
+	vec4 the_color;
+	if(u_isSelected)
+	{
+		the_color = vec4(0.0f, 0.0f, 1.0f, 0.5f);
+	}
+	else if(u_isHighlighted)
+	{
+		the_color = vec4(0.2f, 0.2f, 0.2f, 0.5f);
+	}
+	else
+	{
+		the_color = u_color;
+	}
+
+	// at two side semicircle
+	if(projLength<0 || projLength>len)
+	{
+		vec2 side_origin = begin_origin;
+		if(projLength>len)
+		{
+			side_origin = end_origin;
+		}
+
+		if(is_point_in_circle(ndc.xy, side_origin, raidus_in))
+		{
+			color = the_color;
+		}
+		else
+		{
+			float dist = distance(ndc.xy, side_origin);
+			float factor = (dist - raidus_in) / (ANTIALIASING_WIDTH_in_stanard_CS / 2.0f);
+			color = vec4(the_color.xyz *(1.0f - factor), 1.0f);
+		}
+	}
+	// in line
+	else
+	{
+		vec2 projPt=begin_origin+cDir*projLength;
+		float dist = distance(projPt, ndc.xy);
+		if(dist <= raidus_in)
+		{
+			color = the_color;
+		}
+		else
+		{
+			float factor = (dist - raidus_in) / (ANTIALIASING_WIDTH_in_stanard_CS / 2.0f);
+			color = vec4(the_color.xyz *(1.0f - factor), 1.0f);
+		}
+	}
+}
+
+void main(void)
+{
+	set_color_normal();
 
 	//color = u_color + vec4(0.0f, 0.0f, 1.0f, 1.0f - factor);
 	//color = u_color + vec4(0.0f, 0.0f, 1.0f, 1.0f - pt1.x);
