@@ -12,14 +12,14 @@ uniform float u_lineWidth;
 uniform bool u_isSelected;
 uniform bool u_isHighlighted;
 
-out vec3 begin; 	// line begin point in standard CS
+out vec3 begin; 	// line begin point 
 out vec3 end;
-out float width;	// line width in standard CS
+out vec3 offset_vec;	
 
 #define PI 3.1415926
 // antialiasing width, usually 3 pixels
-#define ANTIALIASING_WIDTH 5.0f
-#define HIGHLIGHT_WIDTH 10.0f
+#define ANTIALIASING_WIDTH 2.0f
+#define HIGHLIGHT_WIDTH 5.0f
 
 mat4 buildRotateZ(float rad)
 {
@@ -75,11 +75,11 @@ void testValue(float v, float min, float max)
 	}
 }
 
-void emitVertices(vec3 b, vec3 e, float w)
+void emitVertices(vec3 b, vec3 e, vec3 offset)
 {
 	begin =b;
 	end = e;
-	width = w;
+	offset_vec = offset;
 }
 
 void main(void)
@@ -126,18 +126,46 @@ void main(void)
 	
 	// for glm::ortho(0, width, height, 0), up is -1, down is 1 in standard (-1,1) CS, 
 	// the normal vector should map this CS.
-	vec3 normal_in_standard_CS = vec3(normal.x, -normal.y, normal.z);
-	vec3 dir_in_standard_CS = vec3(dir.x, -dir.y, dir.z);
-	vec3 offset=feather/2.0f*normal_in_standard_CS;	
-	vec4 proj_start = u_pMat*start_in_view;	// in standard CS
-	vec4 proj_end = u_pMat*end_in_view;
-	vec3 s=vec3(proj_start) - dir_in_standard_CS*feather / 2.0f;
-	vec3 e=vec3(proj_end) + dir_in_standard_CS*feather / 2.0f;
-	float w=feather;
-	vec3 p1=s + offset;
-	vec3 p2=s - offset;
-	vec3 p3=e + offset;
-	vec3 p4=e - offset;
+	// vec3 normal_in_standard_CS = vec3(normal.x, -normal.y, normal.z);
+	// vec3 dir_in_standard_CS = vec3(dir.x, -dir.y, dir.z);
+	// vec3 offset=feather/2.0f*normal_in_standard_CS;	
+	// vec4 proj_start = u_pMat*start_in_view;	// in standard CS
+	// vec4 proj_end = u_pMat*end_in_view;
+
+	//vec3 proj_dir = normalize(proj_end.xyz - proj_start.xyz);
+	//vec4 proj_normal = rMat*vec4(proj_dir,1.0f);
+	//offset = vec3( feather/2.0f*proj_normal);
+
+	float cell00 = u_pMat[0][0];
+	float cell11 = u_pMat[1][1];
+	float width_in_view_CS = 2.0 / cell00;
+	float height_in_view_CS = 2.0 / cell11;
+	float size_per_pixel = width_in_view_CS / u_viewportSize.x;
+	float width_pixel;
+	if(u_isSelected || u_isHighlighted)
+	{
+		width_pixel = u_lineWidth + ANTIALIASING_WIDTH + HIGHLIGHT_WIDTH;
+	}
+	else
+	{
+		width_pixel = u_lineWidth + ANTIALIASING_WIDTH;
+	}
+	vec3 new_start_in_view = vec3(start_in_view) - dir * size_per_pixel * width_pixel / 2.0f;
+	vec3 new_end_in_view = vec3(end_in_view) + dir * size_per_pixel * width_pixel / 2.0f;
+	vec3 offset = vec3(normal * size_per_pixel * width_pixel / 2.0);
+	vec3 p1 = vec3(u_pMat * vec4(new_start_in_view + offset, 1.0f));
+	vec3 p2 = vec3(u_pMat * vec4(new_start_in_view - offset, 1.0f));
+	vec3 p3 = vec3(u_pMat * vec4(new_end_in_view + offset, 1.0f));
+	vec3 p4 = vec3(u_pMat * vec4(new_end_in_view - offset, 1.0f));
+
+	// vec3 s=vec3(proj_start) - dir_in_standard_CS*feather / 2.0f;
+	// vec3 e=vec3(proj_end) + dir_in_standard_CS*feather / 2.0f;
+
+	// float w=feather;
+	// vec3 p1=s + offset;
+	// vec3 p2=s - offset;
+	// vec3 p3=e + offset;
+	// vec3 p4=e - offset;
 	//testValue(offset.x, -0.044, -0.043);
 	//testValue(offset.y, -0.044, -0.043);
 	
@@ -158,31 +186,35 @@ void main(void)
 
 	// the "triangle_strip" direction is for points in standard([-1,1]) CS,
 	// the following code is for no switching Y projection matrix like: glm::ortho(0, width, 0, height)
-	// gl_Position=vec4(p1, 1.0f);
-	// EmitVertex();
-	// gl_Position=vec4(p2, 1.0f);
-	// EmitVertex();
-	// gl_Position=vec4(p3, 1.0f);
-	// EmitVertex();
-	// gl_Position=vec4(p4, 1.0f);
-	// EmitVertex();
-	// EndPrimitive();
+	gl_Position=vec4(p1, 1.0f);
+	emitVertices(start_in_view.xyz, end_in_view.xyz, offset);
+	EmitVertex();
+	gl_Position=vec4(p3, 1.0f);
+	emitVertices(start_in_view.xyz, end_in_view.xyz, offset);
+	EmitVertex();
+	gl_Position=vec4(p2, 1.0f);
+	emitVertices(start_in_view.xyz, end_in_view.xyz, offset);
+	EmitVertex();
+	gl_Position=vec4(p4, 1.0f);
+	emitVertices(start_in_view.xyz, end_in_view.xyz, offset);
+	EmitVertex();
+	EndPrimitive();
 
 	
 
 	// the following code is for SHADERed, which use glm::ortho(0, width, height, 0). 
-	gl_Position=vec4(p1, 1.0f);
-	emitVertices(s, e, w);
-	EmitVertex();
-	gl_Position=vec4(p3, 1.0f);
-	emitVertices(s, e, w);
-	EmitVertex();
-	gl_Position=vec4(p2, 1.0f);
-	emitVertices(s, e, w);
-	EmitVertex();
-	gl_Position=vec4(p4, 1.0f);
-	emitVertices(s, e, w);
-	EmitVertex();
-	EndPrimitive();
+	// gl_Position=vec4(p1, 1.0f);
+	// emitVertices(new_start_in_view, new_end_in_view, offset);
+	// EmitVertex();
+	// gl_Position=vec4(p2, 1.0f);
+	// emitVertices(new_start_in_view, new_end_in_view, offset);
+	// EmitVertex();
+	// gl_Position=vec4(p3, 1.0f);
+	// emitVertices(new_start_in_view, new_end_in_view, offset);
+	// EmitVertex();
+	// gl_Position=vec4(p4, 1.0f);
+	// emitVertices(new_start_in_view, new_end_in_view, offset);
+	// EmitVertex();
+	// EndPrimitive();
 	
 }
