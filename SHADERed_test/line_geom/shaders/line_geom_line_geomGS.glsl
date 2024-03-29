@@ -97,15 +97,15 @@ void main(void)
 
 	mat4 rMat=buildRotateZ(PI/2.0);
 	vec4 normal = rMat*vec4(dir,1.0f);	// in view CS
-	float feather;
-	if(u_isSelected || u_isHighlighted)
-	{
-		feather = (u_lineWidth + ANTIALIASING_WIDTH + HIGHLIGHT_WIDTH) * (2.0f / u_viewportSize.x);
-	}
-	else
-	{
-		feather = (u_lineWidth + ANTIALIASING_WIDTH) * (2.0f / u_viewportSize.x);	//logical line width with antialiasing in standard CS
-	}
+	// float feather;
+	// if(u_isSelected || u_isHighlighted)
+	// {
+	// 	feather = (u_lineWidth + ANTIALIASING_WIDTH + HIGHLIGHT_WIDTH) * (2.0f / u_viewportSize.x);
+	// }
+	// else
+	// {
+	// 	feather = (u_lineWidth + ANTIALIASING_WIDTH) * (2.0f / u_viewportSize.x);	//logical line width with antialiasing in standard CS
+	// }
 	 
 	
 	//testValue(normal.x, -0.708, -0.707);
