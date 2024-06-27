@@ -29,7 +29,7 @@ unsigned int rbo;
 
 
 GLuint mvLoc, projLoc, tfLoc;
-int width, height;
+int width = 600, height = 600;
 float aspect;
 glm::mat4 pMat, vMat, tMat, rMat, mMat, mvMat;
 float timeFactor;
@@ -95,7 +95,7 @@ void init(GLFWwindow* window)
 	std::string svShaderPathStr = Utils::getCurrentExecuteDir();
 	svShaderPathStr.append("\\shaders\\screenVert.glsl");
 	std::string sfShaderPathStr = Utils::getCurrentExecuteDir();
-	fShaderPathStr.append("\\shaders\\screenFrag.glsl");
+	sfShaderPathStr.append("\\shaders\\screenFrag.glsl");
 	screenProgram = Utils::createShaderProgram(svShaderPathStr.c_str(), sfShaderPathStr.c_str());
 
 	std::string fTexturePathStr = Utils::getCurrentExecuteDir();
@@ -138,7 +138,7 @@ void display(GLFWwindow* window, double currentTime)
 	glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
 	// make sure we clear the framebuffer's content
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_DEPTH_BUFFER_BIT);	//注释会导致每个曲面被清除，从而黑屏（P42）
 	//glClear(GL_COLOR_BUFFER_BIT);	//注释将永久留下上一步的残影u
@@ -152,6 +152,7 @@ void display(GLFWwindow* window, double currentTime)
 	glUniform1f(tfLoc, timeFactor);
 
 	glfwGetFramebufferSize(window, &width, &height);
+	glViewport(0, 0, width, height);
 	aspect = (float)width / (float)height;
 	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
@@ -210,6 +211,9 @@ int main()
 	}
 	glfwSwapInterval(1);
 	init(window);
+
+	// draw as wireframe
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	while (!glfwWindowShouldClose(window))
 	{
