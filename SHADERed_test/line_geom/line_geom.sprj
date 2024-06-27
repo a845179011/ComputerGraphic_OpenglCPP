@@ -3,7 +3,7 @@
 	<pipeline>
 		<pass name="line_geom" type="shader" active="true" patchverts="1">
 			<shader type="vs" path="shaders\line_geom_line_geomVS.glsl" entry="main" />
-			<shader type="ps" path="shaders\line_geom_line_geomPS.glsl" entry="" />
+			<shader type="ps" path="shaders\line_geom_line_geomPS.glsl" entry="main" />
 			<shader used="true" type="gs" path="shaders\line_geom_line_geomGS.glsl" entry="main" />
 			<inputlayout>
 				<item value="BufferFloat3" semantic="POSITION" />
@@ -45,9 +45,7 @@
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="file" name="line_geom" shader="vs" />
-		<entry type="file" name="line_geom" shader="ps" />
-		<entry type="file" name="line_geom" shader="gs" />
+		<entry type="property" name="line_geom" item="pipe" />
 		<entry type="pinned" name="u_lineWidth" owner="line_geom" />
 		<entry type="camera" fp="true">
 			<positionX>0</positionX>

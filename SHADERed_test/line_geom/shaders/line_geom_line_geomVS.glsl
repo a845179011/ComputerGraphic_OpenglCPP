@@ -12,6 +12,6 @@ uniform float u_lineWidth;
 void main(void) 
 {
 	mat4 mvMat = u_vMat * u_mMat;
-	gl_Position = u_pMat * mvMat* vec4(position, 1.0f);
+	gl_Position =  mvMat* vec4(position, 1.0f);
 	//the_color = vec4(0.0f, 0.0f, 1.0f, 1.0f);
 }

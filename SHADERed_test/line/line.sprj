@@ -29,8 +29,6 @@
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="file" name="line" shader="vs" />
-		<entry type="file" name="line" shader="ps" />
 		<entry type="camera" fp="true">
 			<positionX>0</positionX>
 			<positionY>0</positionY>
