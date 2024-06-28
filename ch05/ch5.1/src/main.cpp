@@ -213,11 +213,11 @@ int main()
 	init(window);
 
 	// draw as wireframe
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	while (!glfwWindowShouldClose(window))
 	{
-		display(window, glfwGetTime());
+		display(window, /*glfwGetTime()*/ 1.0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
