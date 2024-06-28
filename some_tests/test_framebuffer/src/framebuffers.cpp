@@ -259,9 +259,9 @@ int main()
 
         // render
         // ------
-        //// bind to framebuffer and draw scene as we normally would to color texture 
-        //glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-        //glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
+        // bind to framebuffer and draw scene as we normally would to color texture 
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
         // make sure we clear the framebuffer's content
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -291,17 +291,17 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 
-        //// now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-        //// clear all relevant buffers
-        //glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
-        //glClear(GL_COLOR_BUFFER_BIT);
+        // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+        // clear all relevant buffers
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        //screenShader.use();
-        //glBindVertexArray(quadVAO);
-        //glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        screenShader.use();
+        glBindVertexArray(quadVAO);
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

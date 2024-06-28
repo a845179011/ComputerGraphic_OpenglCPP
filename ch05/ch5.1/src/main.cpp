@@ -66,9 +66,13 @@ void setupVertices()
 	glGenBuffers(numVBOs, vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPosition), pyramidPosition, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	// screen quad VAO
 	glGenVertexArrays(1, &quadVAO);
@@ -109,6 +113,14 @@ void init(GLFWwindow* window)
 	cubeLocZ = 0.0f;
 	setupVertices();
 
+	// opengl 430支持binding : layout(binding=0) uniform sampler2D samp;可以不用glUniform1i
+	// opengl 330不支持
+	
+	//glUseProgram(renderingProgram);
+	//glUniform1i(glGetUniformLocation(renderingProgram, "samp"), 0);
+	//glUseProgram(screenProgram);
+	//glUniform1i(glGetUniformLocation(screenProgram, "screenTexture"), 0);
+
 	// framebuffer configuration
 	// -------------------------
 	glGenFramebuffers(1, &framebuffer);
@@ -145,11 +157,11 @@ void display(GLFWwindow* window, double currentTime)
 	glUseProgram(renderingProgram);
 	
 	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
-	tfLoc = glGetUniformLocation(renderingProgram, "tf");
+	//tfLoc = glGetUniformLocation(renderingProgram, "tf");
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix");
 
-	timeFactor = (float)currentTime;
-	glUniform1f(tfLoc, timeFactor);
+	//timeFactor = (float)currentTime;
+	//glUniform1f(tfLoc, timeFactor);
 
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
@@ -163,16 +175,10 @@ void display(GLFWwindow* window, double currentTime)
 	mMat = tMat * rMat;
 	mvMat = vMat * mMat;
 
+	glBindVertexArray(vao[0]);
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(1);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, brickTexture);
 
@@ -180,8 +186,6 @@ void display(GLFWwindow* window, double currentTime)
 	glDepthFunc(GL_LEQUAL);
 	glDrawArrays(GL_TRIANGLES, 0, 18);	//18是顶点数
 
-
-	glBindVertexArray(0);
 	// now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
@@ -201,8 +205,9 @@ int main()
 	{
 		exit(EXIT_FAILURE);
 	}
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	GLFWwindow* window = glfwCreateWindow(600, 600, "window 1", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK)
@@ -217,7 +222,7 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		display(window, /*glfwGetTime()*/ 1.0);
+		display(window, glfwGetTime()/* 1.0*/);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
